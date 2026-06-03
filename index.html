@@ -403,22 +403,25 @@ background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:
 .pr-orb-1{width:500px;height:500px;background:radial-gradient(circle,rgba(212,168,75,.12),transparent);top:-150px;right:-100px;animation:orbf 26s ease-in-out infinite}
 @property --pb-float{syntax:'<length>';inherits:false;initial-value:0px}
 @property --pb-hover{syntax:'<length>';inherits:false;initial-value:0px}
-.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:52px;perspective:1800px;perspective-origin:50% 45%}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:52px;align-items:stretch}
 
-/* === PKG-COL — wraps green handle (pkg-boost) + price-box as one tilted stack === */
+/* === PKG-COL — wraps green handle (pkg-boost) + price-box as an upright equal-size stack ===
+   All three columns share an identical footprint: no rotation, no tilt, no scale-up/down.
+   Starter is distinguished by VISUAL TREATMENT (gold edge + ribbon + glow), never by size. */
 .pkg-col{
-  --pb-rot:0deg;--pb-base-y:0px;--pb-float:0px;--pb-hover:0px;--pb-scale:1;
+  --pb-float:0px;--pb-hover:0px;
   display:flex;flex-direction:column;align-items:stretch;
-  transform-style:preserve-3d;transform-origin:50% 55%;
-  transform:rotateY(var(--pb-rot)) translate3d(0,calc(var(--pb-base-y) + var(--pb-float) + var(--pb-hover)),0) scale(var(--pb-scale))!important;
+  height:100%;
+  transform-origin:50% 55%;
+  transform:translate3d(0,calc(var(--pb-float) + var(--pb-hover)),0);
   animation:pb-float-anim 12s cubic-bezier(.45,.05,.55,.95) infinite;
   will-change:transform;
   transition:opacity .8s var(--ease),--pb-hover .55s var(--ease);
 }
-.price-grid>.pkg-col:first-child{--pb-rot:11deg;animation-delay:-3s}
-.price-grid>.pkg-col:last-child{--pb-rot:-11deg;animation-delay:0s}
-.price-grid>.pkg-col:not(.featured){--pb-scale:.9}
-.price-grid>.pkg-col.featured{--pb-scale:1;z-index:2}
+.price-grid>.pkg-col:first-child{animation-delay:-3s}
+.price-grid>.pkg-col:nth-child(2){animation-delay:-1.5s}
+.price-grid>.pkg-col:last-child{animation-delay:0s}
+.price-grid>.pkg-col.featured{z-index:2}
 .pkg-col:hover{--pb-hover:-8px}
 
 .price-box{border:1px solid rgba(212,168,75,.2);border-top:2px solid rgba(212,168,75,.45);border-radius:22px;
@@ -426,6 +429,7 @@ background:
   linear-gradient(145deg,rgba(212,168,75,.07) 0%,rgba(212,168,75,.02) 55%,rgba(212,168,75,.045) 100%);
 backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
 padding:48px 40px 44px;position:relative;text-align:left;overflow:hidden;
+flex:1 1 auto;min-height:620px;display:flex;flex-direction:column;
 box-shadow:
   0 50px 120px rgba(0,0,0,.72),
   0 22px 44px rgba(0,0,0,.52),
@@ -433,6 +437,10 @@ box-shadow:
   0 0 60px rgba(212,168,75,.06),
   inset 0 1px 0 rgba(255,255,255,.06);
 transition:border-color .4s,box-shadow .4s var(--ease)}
+/* Spacer above Premium box (no boost handle) so all three box-TOPS align,
+   matching the green handle height of Starter/Project. Height tuned to the
+   collapsed .pkg-boost handle + its margin-bottom. */
+.pkg-spacer{height:91px;flex:0 0 auto}
 .price-box::before{content:'';position:absolute;inset:0;border-radius:22px;pointer-events:none;
   background:
     radial-gradient(ellipse 120% 60% at 50% -10%,rgba(255,232,180,.12),transparent 55%),
@@ -445,15 +453,18 @@ transition:border-color .4s,box-shadow .4s var(--ease)}
     0 40px 90px rgba(0,0,0,.55),
     0 14px 28px rgba(0,0,0,.38),
     inset 0 1px 0 rgba(255,255,255,.1)}
-.price-box.featured{border-color:rgba(212,168,75,.5);border-top-color:rgba(212,168,75,.65);
+/* Starter highlight — VISUAL TREATMENT ONLY (gold edge + glow + 2px lift), never larger */
+.price-box.featured{border:1.5px solid rgba(212,168,75,.62);border-top:2.5px solid var(--gold);
+transform:translateY(-2px);
 background:
-  linear-gradient(145deg,rgba(212,168,75,.1) 0%,rgba(212,168,75,.035) 55%,rgba(212,168,75,.075) 100%);
+  linear-gradient(145deg,rgba(212,168,75,.12) 0%,rgba(212,168,75,.04) 55%,rgba(212,168,75,.085) 100%);
 box-shadow:
   0 60px 140px rgba(0,0,0,.78),
   0 26px 52px rgba(0,0,0,.55),
   0 10px 22px rgba(0,0,0,.42),
-  0 0 90px rgba(212,168,75,.14),
-  inset 0 1px 0 rgba(255,255,255,.08)}
+  0 0 0 1px rgba(212,168,75,.28),
+  0 0 70px rgba(212,168,75,.22),
+  inset 0 1px 0 rgba(255,255,255,.1)}
 
 @keyframes pb-float-anim{
   0%{--pb-float:0px}
@@ -478,10 +489,60 @@ box-shadow:
 .price-orig.boost-pulse{animation:boostPulseSub .9s var(--ease)}
 @keyframes boostPulse{0%{transform:scale(1)}40%{transform:scale(1.04);text-shadow:0 0 24px rgba(212,168,75,.5)}100%{transform:scale(1)}}
 @keyframes boostPulseSub{0%,100%{opacity:.28}50%{opacity:.55}}
-.price-includes{margin-top:32px;display:flex;flex-direction:column;gap:10px;text-align:left}
+.price-includes{margin-top:32px;display:flex;flex-direction:column;gap:10px;text-align:left;flex:1 1 auto}
 .pi{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:rgba(242,237,228,.65);line-height:1.5}
 .pi::before{content:'·';color:var(--gold);font-size:16px;flex-shrink:0;line-height:1.2;margin-top:1px}
 .pi.hi{color:rgba(242,237,228,.9);font-weight:500}
+
+/* Premium hero include — gold-highlighted, dynamic ad-budget standout */
+.pi-budget{
+  position:relative;
+  display:block;margin-top:6px;padding:16px 18px;
+  border-radius:14px;
+  border:1px solid rgba(212,168,75,.42);
+  background:linear-gradient(135deg,rgba(212,168,75,.16) 0%,rgba(212,168,75,.05) 60%,rgba(212,168,75,.12) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 0 1px rgba(212,168,75,.12);
+  overflow:hidden;
+  animation:budgetPulse 3.6s ease-in-out infinite;
+}
+.pi-budget::before{content:none}
+.pi-budget .pi-budget-top{
+  display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px;
+}
+.pi-budget .pi-budget-amt{
+  font-family:'Playfair Display',serif;font-weight:600;
+  font-size:22px;line-height:1;color:var(--gold);letter-spacing:-.01em;
+  text-shadow:0 0 22px rgba(212,168,75,.35);
+}
+.pi-budget .pi-budget-tag{
+  font-family:'Inter',sans-serif;font-size:8.5px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;color:#1a1410;
+  background:var(--gold);border-radius:100px;padding:3px 9px;
+}
+.pi-budget .pi-budget-line{
+  font-family:'Inter',sans-serif;font-size:12px;line-height:1.55;
+  color:rgba(242,237,228,.82);font-weight:500;letter-spacing:.01em;
+}
+.pi-budget .pi-budget-line b{color:var(--gold2);font-weight:700}
+.pi-budget::after{
+  content:'';position:absolute;inset:0;border-radius:14px;pointer-events:none;
+  background:linear-gradient(120deg,transparent 30%,rgba(255,232,180,.18) 50%,transparent 70%);
+  transform:translateX(-120%);
+  animation:budgetSheen 4.8s ease-in-out infinite;
+}
+@keyframes budgetPulse{
+  0%,100%{box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 0 1px rgba(212,168,75,.12),0 0 18px rgba(212,168,75,.06)}
+  50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 0 0 1px rgba(212,168,75,.26),0 0 34px rgba(212,168,75,.2)}
+}
+@keyframes budgetSheen{
+  0%,62%{transform:translateX(-120%)}
+  82%,100%{transform:translateX(120%)}
+}
+.pi-budget .pi-budget-amt.count-in{animation:budgetCount .9s var(--ease)}
+@keyframes budgetCount{0%{opacity:.3;transform:scale(.92)}100%{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){
+  .pi-budget,.pi-budget::after{animation:none!important}
+}
 
 /* Per-package Reach Boost — green "handle" container ABOVE the price-card. */
 .pkg-boost{
@@ -659,9 +720,10 @@ box-shadow:
   .pkg-boost-desc{font-size:11px}
 }
 @media(max-width:700px){
-  .price-grid{grid-template-columns:1fr;perspective:none}
-  .pkg-col,.price-grid>.pkg-col:first-child,.price-grid>.pkg-col:last-child{--pb-rot:0deg;--pb-base-y:0px;--pb-scale:1;transform:none!important}
-  .price-box{padding:36px 24px}
+  .price-grid{grid-template-columns:1fr}
+  .pkg-col,.price-grid>.pkg-col:first-child,.price-grid>.pkg-col:last-child{transform:none!important;height:auto}
+  .price-box{padding:36px 24px;min-height:0}
+  .pkg-spacer{display:none}
 }
 
 /* CTA */
@@ -1166,7 +1228,7 @@ position:relative;overflow:hidden;transition:color .35s}
         </div>
         <div class="price-box rv" data-pkg-box="project">
           <h3 class="price-title">Project</h3>
-          <p class="price-sub">3 videos &middot; 6 stories with CTA &middot; 30 lifestyle images</p>
+          <p class="price-sub">3 videos &middot; 6 stories with CTA &middot; 100 lifestyle images</p>
           <p class="price-total-lbl">Price</p>
           <p class="price-orig" data-base="reg. 4 950 €" data-boost="reg. 6 950 €">reg. 4 950 €</p>
           <p class="price-total" data-base="3500" data-boost="5500">3 500</p>
@@ -1174,7 +1236,7 @@ position:relative;overflow:hidden;transition:color .35s}
           <div class="price-includes">
             <p class="pi hi">3 videos published on Villa Sjövik&apos;s channels</p>
             <p class="pi hi">6 stories on Villa Sjövik&apos;s channels &mdash; direct link and CTA</p>
-            <p class="pi hi">30 lifestyle images for your own channels and website</p>
+            <p class="pi hi">100 lifestyle images for your own channels and website</p>
             <p class="pi">Full usage rights to all material</p>
             <p class="pi">Styling, filming and editing included</p>
           </div>
@@ -1183,20 +1245,27 @@ position:relative;overflow:hidden;transition:color .35s}
 
       <!-- Premium -->
       <div class="pkg-col rv d3" data-pkg-col="premium">
+        <div class="pkg-spacer" aria-hidden="true"></div>
         <div class="price-box rv" data-pkg-box="premium">
           <span class="price-ribbon" style="background:#1a1410;color:var(--gold);border:1px solid rgba(212,168,75,.5)">Performance &middot; PREMIUM</span>
           <h3 class="price-title">Premium</h3>
-          <p class="price-sub">Project package &middot; paid media rights &middot; &euro;1 000 ads pilot</p>
+          <p class="price-sub">3 videos &middot; 6 stories with CTA &middot; 200 lifestyle images &middot; Meta ad budget included</p>
           <p class="price-total-lbl">Price</p>
           <p class="price-orig">reg. 9 500 &euro;</p>
           <p class="price-total">7 000</p>
           <span class="price-unit">EUR</span>
           <div class="price-includes">
+            <div class="pi-budget" data-budget-card>
+              <div class="pi-budget-top">
+                <span class="pi-budget-amt" data-budget-amt>&euro;3 000</span>
+                <span class="pi-budget-tag">Meta ad budget included</span>
+              </div>
+              <p class="pi-budget-line"><b>&euro;1 000 ad budget per production</b> &mdash; across all 3 productions, that&apos;s &euro;3 000 of Meta reach included, no add-on needed.</p>
+            </div>
             <p class="pi hi">3 videos published on Villa Sjövik&apos;s channels</p>
             <p class="pi hi">6 stories on Villa Sjövik&apos;s channels &mdash; direct link and CTA</p>
-            <p class="pi hi">30 lifestyle images for your own channels and website</p>
-            <p class="pi hi">Paid media rights &mdash; full ad usage across all 3 videos, 6 stories and 30 images</p>
-            <p class="pi hi">Meta ads pilot &mdash; &euro;1 000 budget + 2 short retargeting cuts shaped from your main ad creative</p>
+            <p class="pi hi">200 lifestyle images for your own channels and website</p>
+            <p class="pi hi">Paid media rights &mdash; full ad usage across all videos, stories and images</p>
             <p class="pi">Full usage rights to all material</p>
             <p class="pi">Styling, filming and editing included</p>
           </div>
@@ -1790,6 +1859,34 @@ if(spotSec){
   },{threshold:VIEW_THRESHOLD});
 
   obs.observe(sec);
+})();
+
+/* PREMIUM AD-BUDGET — count-in the €3,000 figure when the investment section
+   scrolls into view, so the included budget reads as dynamic. Runs once. */
+(function(){
+  const amt=document.querySelector('[data-budget-amt]');
+  if(!amt)return;
+  const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const target=3000;
+  let done=false;
+  function countIn(){
+    if(done)return;done=true;
+    if(reduce){amt.innerHTML='&euro;3 000';return;}
+    const dur=900,t0=performance.now();
+    amt.classList.add('count-in');
+    function tick(now){
+      const p=Math.min(1,(now-t0)/dur);
+      const eased=1-Math.pow(1-p,3);
+      const v=Math.round(target*eased/50)*50;
+      amt.innerHTML='&euro;'+String(v).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+      if(p<1)requestAnimationFrame(tick);else amt.innerHTML='&euro;3 000';
+    }
+    requestAnimationFrame(tick);
+  }
+  const o=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){countIn();o.disconnect();}});
+  },{threshold:.4});
+  o.observe(amt);
 })();
 
 /* BOOKING FLOW */
