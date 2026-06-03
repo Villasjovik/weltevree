@@ -1729,7 +1729,7 @@ if(spotSec){
       const currentDisplayed=parseInt(total.textContent.replace(/[^\d]/g,''),10);
       const target=base+cost;
       if(currentDisplayed!==target){
-        animateNumber(total,currentDisplayed,target,420);
+        total.textContent=fmt(target);
         total.classList.remove('boost-pulse');void total.offsetWidth;total.classList.add('boost-pulse');
       }
       if(orig){orig.textContent= cost===0 ? orig.dataset.base : orig.dataset.boost;}
@@ -1764,7 +1764,7 @@ if(spotSec){
         const base=+total.dataset.base, boost=+total.dataset.boost;
         const from=next?base:boost, to=next?boost:base;
         if(from!==to){
-          animateNumber(total,from,to,720);
+          total.textContent=fmt(to);
           total.classList.remove('boost-pulse');void total.offsetWidth;total.classList.add('boost-pulse');
         }
         const orig=col.querySelector('.price-orig[data-base][data-boost]');
