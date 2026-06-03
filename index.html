@@ -403,25 +403,25 @@ background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:
 .pr-orb-1{width:500px;height:500px;background:radial-gradient(circle,rgba(212,168,75,.12),transparent);top:-150px;right:-100px;animation:orbf 26s ease-in-out infinite}
 @property --pb-float{syntax:'<length>';inherits:false;initial-value:0px}
 @property --pb-hover{syntax:'<length>';inherits:false;initial-value:0px}
-.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:52px;align-items:stretch}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:52px;perspective:1800px;perspective-origin:50% 45%}
 
-/* === PKG-COL — wraps green handle (pkg-boost) + price-box as an upright equal-size stack ===
-   All three columns share an identical footprint: no rotation, no tilt, no scale-up/down.
-   Starter is distinguished by VISUAL TREATMENT (gold edge + ribbon + glow), never by size. */
+/* === PKG-COL — wraps green handle (pkg-boost) + price-box as one tilted 3D stack ===
+   Featured-center layout: left + right columns tilt inward, Starter (center, .featured)
+   stays upright AND scaled up so it reads as the dominant hero card. */
 .pkg-col{
-  --pb-float:0px;--pb-hover:0px;
+  --pb-rot:0deg;--pb-base-y:0px;--pb-float:0px;--pb-hover:0px;--pb-scale:1;
   display:flex;flex-direction:column;align-items:stretch;
-  height:100%;
-  transform-origin:50% 55%;
-  transform:translate3d(0,calc(var(--pb-float) + var(--pb-hover)),0);
+  transform-style:preserve-3d;transform-origin:50% 55%;
+  transform:rotateY(var(--pb-rot)) translate3d(0,calc(var(--pb-base-y) + var(--pb-float) + var(--pb-hover)),0) scale(var(--pb-scale))!important;
   animation:pb-float-anim 12s cubic-bezier(.45,.05,.55,.95) infinite;
   will-change:transform;
   transition:opacity .8s var(--ease),--pb-hover .55s var(--ease);
 }
-.price-grid>.pkg-col:first-child{animation-delay:-3s}
+.price-grid>.pkg-col:first-child{--pb-rot:11deg;animation-delay:-3s}
 .price-grid>.pkg-col:nth-child(2){animation-delay:-1.5s}
-.price-grid>.pkg-col:last-child{animation-delay:0s}
-.price-grid>.pkg-col.featured{z-index:2}
+.price-grid>.pkg-col:last-child{--pb-rot:-11deg;animation-delay:0s}
+.price-grid>.pkg-col:not(.featured){--pb-scale:.9}
+.price-grid>.pkg-col.featured{--pb-scale:1.08;z-index:2}
 .pkg-col:hover{--pb-hover:-8px}
 
 .price-box{border:1px solid rgba(212,168,75,.2);border-top:2px solid rgba(212,168,75,.45);border-radius:22px;
@@ -429,7 +429,6 @@ background:
   linear-gradient(145deg,rgba(212,168,75,.07) 0%,rgba(212,168,75,.02) 55%,rgba(212,168,75,.045) 100%);
 backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
 padding:48px 40px 44px;position:relative;text-align:left;overflow:hidden;
-flex:1 1 auto;min-height:620px;display:flex;flex-direction:column;
 box-shadow:
   0 50px 120px rgba(0,0,0,.72),
   0 22px 44px rgba(0,0,0,.52),
@@ -453,17 +452,18 @@ transition:border-color .4s,box-shadow .4s var(--ease)}
     0 40px 90px rgba(0,0,0,.55),
     0 14px 28px rgba(0,0,0,.38),
     inset 0 1px 0 rgba(255,255,255,.1)}
-/* Starter highlight — VISUAL TREATMENT ONLY (gold edge + glow + 2px lift), never larger */
-.price-box.featured{border:1.5px solid rgba(212,168,75,.62);border-top:2.5px solid var(--gold);
-transform:translateY(-2px);
+/* Starter highlight — PERMANENT gold treatment (always on, not hover-dependent):
+   strong gold border + gold top edge + soft permanent gold glow. Combined with the
+   center column's scale 1.08, Starter reads as the unmistakable chosen card at rest. */
+.price-box.featured{border:1.5px solid rgba(212,168,75,.66);border-top:3px solid var(--gold);
 background:
-  linear-gradient(145deg,rgba(212,168,75,.12) 0%,rgba(212,168,75,.04) 55%,rgba(212,168,75,.085) 100%);
+  linear-gradient(145deg,rgba(212,168,75,.13) 0%,rgba(212,168,75,.045) 55%,rgba(212,168,75,.09) 100%);
 box-shadow:
   0 60px 140px rgba(0,0,0,.78),
   0 26px 52px rgba(0,0,0,.55),
   0 10px 22px rgba(0,0,0,.42),
-  0 0 0 1px rgba(212,168,75,.28),
-  0 0 70px rgba(212,168,75,.22),
+  0 0 0 1px rgba(212,168,75,.32),
+  0 0 80px rgba(212,168,75,.26),
   inset 0 1px 0 rgba(255,255,255,.1)}
 
 @keyframes pb-float-anim{
@@ -489,7 +489,7 @@ box-shadow:
 .price-orig.boost-pulse{animation:boostPulseSub .9s var(--ease)}
 @keyframes boostPulse{0%{transform:scale(1)}40%{transform:scale(1.04);text-shadow:0 0 24px rgba(212,168,75,.5)}100%{transform:scale(1)}}
 @keyframes boostPulseSub{0%,100%{opacity:.28}50%{opacity:.55}}
-.price-includes{margin-top:32px;display:flex;flex-direction:column;gap:10px;text-align:left;flex:1 1 auto}
+.price-includes{margin-top:32px;display:flex;flex-direction:column;gap:10px;text-align:left}
 .pi{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:rgba(242,237,228,.65);line-height:1.5}
 .pi::before{content:'·';color:var(--gold);font-size:16px;flex-shrink:0;line-height:1.2;margin-top:1px}
 .pi.hi{color:rgba(242,237,228,.9);font-weight:500}
@@ -720,9 +720,9 @@ box-shadow:
   .pkg-boost-desc{font-size:11px}
 }
 @media(max-width:700px){
-  .price-grid{grid-template-columns:1fr}
-  .pkg-col,.price-grid>.pkg-col:first-child,.price-grid>.pkg-col:last-child{transform:none!important;height:auto}
-  .price-box{padding:36px 24px;min-height:0}
+  .price-grid{grid-template-columns:1fr;perspective:none}
+  .pkg-col,.price-grid>.pkg-col:first-child,.price-grid>.pkg-col:nth-child(2),.price-grid>.pkg-col:last-child{--pb-rot:0deg;--pb-base-y:0px;--pb-scale:1;transform:none!important}
+  .price-box{padding:36px 24px}
   .pkg-spacer{display:none}
 }
 
@@ -946,6 +946,8 @@ position:relative;overflow:hidden;transition:color .35s}
   .sp-c{padding:26px 20px!important;transform:none!important}
   .sp-c h3{font-size:20px!important}
   .price-grid{grid-template-columns:1fr!important;perspective:none!important;gap:14px}
+  .pkg-col,.price-grid>.pkg-col:first-child,.price-grid>.pkg-col:nth-child(2),.price-grid>.pkg-col:last-child{--pb-rot:0deg;--pb-base-y:0px;--pb-scale:1;transform:none!important}
+  .pkg-spacer{display:none!important}
   .price-box{padding:28px 22px!important;transform:none!important}
   .mq-track{animation-duration:28s!important}
   .mq-track img{max-height:36px!important}
@@ -1155,52 +1157,8 @@ position:relative;overflow:hidden;transition:color .35s}
 
     <div class="price-grid">
 
-      <!-- Starter (featured) -->
-      <div class="pkg-col featured rv d1" data-pkg-col="starter">
-        <div class="pkg-boost" role="group" aria-pressed="false" data-pkg="starter">
-          <button type="button" class="pkg-boost-head" aria-pressed="false" aria-controls="pkg-boost-body-starter" aria-label="Activate Meta reach for the Starter package">
-            <span class="pkg-boost-switch" aria-hidden="true"></span>
-            <span class="pkg-boost-text">
-              <span class="pkg-boost-tag">Optional &middot; <em>Recommended</em></span>
-              <span class="pkg-boost-title">Activate Meta reach <span class="pkg-boost-price" data-bt-price="starter">+1&nbsp;000 &euro;</span></span>
-            </span>
-          </button>
-          <div class="pkg-boost-body" id="pkg-boost-body-starter" aria-hidden="true">
-            <div class="pkg-boost-body-inner">
-              <p class="pkg-boost-desc" data-pkg-desc="starter">Over <strong class="pkg-boost-stat" data-bt-stat="starter">100,000</strong> extra views! Meta retargeting re-shows the video with a clickable link ON the video itself, straight in Instagram and Facebook &mdash; for a seamless hand-off that drives the traffic directly home to your website.</p>
-              <p class="pkg-boost-desc-zero" data-pkg-desc-zero="starter" hidden>Drag the slider to a budget below to see how many extra impressions the package delivers.</p>
-              <div class="pkg-slider">
-                <label class="pkg-slider-lbl" for="pk-range-starter">Meta budget per production</label>
-                <input id="pk-range-starter" class="pkg-range" type="range" min="0" max="3" step="1" value="2" data-pkg-slider="starter" aria-label="Meta budget per production for the Starter package"/>
-                <div class="pkg-ticks" aria-hidden="true">
-                  <span class="pkg-tick" data-pkg-tick="starter" data-step="0">0 &euro;</span>
-                  <span class="pkg-tick" data-pkg-tick="starter" data-step="1">500</span>
-                  <span class="pkg-tick is-active" data-pkg-tick="starter" data-step="2">1 000</span>
-                  <span class="pkg-tick" data-pkg-tick="starter" data-step="3">2 000</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="price-box featured rv" data-pkg-box="starter">
-          <span class="price-ribbon">Recommended &middot; START HERE</span>
-          <h3 class="price-title">Starter</h3>
-          <p class="price-sub">1 video &middot; 2 stories with CTA &middot; 50 lifestyle images</p>
-          <p class="price-total-lbl">Price</p>
-          <p class="price-total" data-base="1650" data-boost="2650">1 650</p>
-          <span class="price-unit">EUR</span>
-          <div class="price-includes">
-            <p class="pi hi">1 video published on Villa Sjövik&apos;s channels &mdash; yours to run on your own channels and as ad material</p>
-            <p class="pi hi">2 stories with direct link and CTA</p>
-            <p class="pi hi">50 lifestyle images for your own channels and website</p>
-            <p class="pi">Full usage rights to all material</p>
-            <p class="pi">Styling, filming and editing included</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Project -->
-      <div class="pkg-col rv d2" data-pkg-col="project">
+      <!-- Project (left, tilts inward) -->
+      <div class="pkg-col rv d1" data-pkg-col="project">
         <div class="pkg-boost" role="group" aria-pressed="false" data-pkg="project">
           <button type="button" class="pkg-boost-head" aria-pressed="false" aria-controls="pkg-boost-body-project" aria-label="Activate Meta reach for the Project package">
             <span class="pkg-boost-switch" aria-hidden="true"></span>
@@ -1237,6 +1195,50 @@ position:relative;overflow:hidden;transition:color .35s}
             <p class="pi hi">3 videos published on Villa Sjövik&apos;s channels</p>
             <p class="pi hi">6 stories on Villa Sjövik&apos;s channels &mdash; direct link and CTA</p>
             <p class="pi hi">100 lifestyle images for your own channels and website</p>
+            <p class="pi">Full usage rights to all material</p>
+            <p class="pi">Styling, filming and editing included</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Starter (center, featured — upright + scaled-up hero) -->
+      <div class="pkg-col featured rv d2" data-pkg-col="starter">
+        <div class="pkg-boost" role="group" aria-pressed="false" data-pkg="starter">
+          <button type="button" class="pkg-boost-head" aria-pressed="false" aria-controls="pkg-boost-body-starter" aria-label="Activate Meta reach for the Starter package">
+            <span class="pkg-boost-switch" aria-hidden="true"></span>
+            <span class="pkg-boost-text">
+              <span class="pkg-boost-tag">Optional &middot; <em>Recommended</em></span>
+              <span class="pkg-boost-title">Activate Meta reach <span class="pkg-boost-price" data-bt-price="starter">+1&nbsp;000 &euro;</span></span>
+            </span>
+          </button>
+          <div class="pkg-boost-body" id="pkg-boost-body-starter" aria-hidden="true">
+            <div class="pkg-boost-body-inner">
+              <p class="pkg-boost-desc" data-pkg-desc="starter">Over <strong class="pkg-boost-stat" data-bt-stat="starter">100,000</strong> extra views! Meta retargeting re-shows the video with a clickable link ON the video itself, straight in Instagram and Facebook &mdash; for a seamless hand-off that drives the traffic directly home to your website.</p>
+              <p class="pkg-boost-desc-zero" data-pkg-desc-zero="starter" hidden>Drag the slider to a budget below to see how many extra impressions the package delivers.</p>
+              <div class="pkg-slider">
+                <label class="pkg-slider-lbl" for="pk-range-starter">Meta budget per production</label>
+                <input id="pk-range-starter" class="pkg-range" type="range" min="0" max="3" step="1" value="2" data-pkg-slider="starter" aria-label="Meta budget per production for the Starter package"/>
+                <div class="pkg-ticks" aria-hidden="true">
+                  <span class="pkg-tick" data-pkg-tick="starter" data-step="0">0 &euro;</span>
+                  <span class="pkg-tick" data-pkg-tick="starter" data-step="1">500</span>
+                  <span class="pkg-tick is-active" data-pkg-tick="starter" data-step="2">1 000</span>
+                  <span class="pkg-tick" data-pkg-tick="starter" data-step="3">2 000</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="price-box featured rv" data-pkg-box="starter">
+          <span class="price-ribbon">Recommended &middot; START HERE</span>
+          <h3 class="price-title">Starter</h3>
+          <p class="price-sub">1 video &middot; 2 stories with CTA &middot; 50 lifestyle images</p>
+          <p class="price-total-lbl">Price</p>
+          <p class="price-total" data-base="1650" data-boost="2650">1 650</p>
+          <span class="price-unit">EUR</span>
+          <div class="price-includes">
+            <p class="pi hi">1 video published on Villa Sjövik&apos;s channels &mdash; yours to run on your own channels and as ad material</p>
+            <p class="pi hi">2 stories with direct link and CTA</p>
+            <p class="pi hi">50 lifestyle images for your own channels and website</p>
             <p class="pi">Full usage rights to all material</p>
             <p class="pi">Styling, filming and editing included</p>
           </div>
