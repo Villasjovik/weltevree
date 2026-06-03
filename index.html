@@ -1653,8 +1653,8 @@ if(spotSec){
     requestAnimationFrame(tick);
   }
 
-  // Step values (EUR): 0 -> 0 €, 1 -> 500, 2 -> 1 000, 3 -> 2 000
-  const STEP_VALUES=[0,500,1000,2000];
+  // Step values (EUR per production), linear: 0 -> 0 €, 1 -> 500, 2 -> 1 000, 3 -> 1 500
+  const STEP_VALUES=[0,500,1000,1500];
   const cardBudget={starter:1000, project:1000};
   const PKG_MULT={starter:1, project:2};
 
