@@ -404,6 +404,23 @@ background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:
 @property --pb-float{syntax:'<length>';inherits:false;initial-value:0px}
 @property --pb-hover{syntax:'<length>';inherits:false;initial-value:0px}
 .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:52px;perspective:1800px;perspective-origin:50% 45%}
+
+/* === PKG-COL — wraps green handle (pkg-boost) + price-box as one tilted stack === */
+.pkg-col{
+  --pb-rot:0deg;--pb-base-y:0px;--pb-float:0px;--pb-hover:0px;--pb-scale:1;
+  display:flex;flex-direction:column;align-items:stretch;
+  transform-style:preserve-3d;transform-origin:50% 55%;
+  transform:rotateY(var(--pb-rot)) translate3d(0,calc(var(--pb-base-y) + var(--pb-float) + var(--pb-hover)),0) scale(var(--pb-scale))!important;
+  animation:pb-float-anim 12s cubic-bezier(.45,.05,.55,.95) infinite;
+  will-change:transform;
+  transition:opacity .8s var(--ease),--pb-hover .55s var(--ease);
+}
+.price-grid>.pkg-col:first-child{--pb-rot:11deg;animation-delay:-3s}
+.price-grid>.pkg-col:last-child{--pb-rot:-11deg;animation-delay:0s}
+.price-grid>.pkg-col:not(.featured){--pb-scale:.9}
+.price-grid>.pkg-col.featured{--pb-scale:1;z-index:2}
+.pkg-col:hover{--pb-hover:-8px}
+
 .price-box{border:1px solid rgba(212,168,75,.2);border-top:2px solid rgba(212,168,75,.45);border-radius:22px;
 background:
   linear-gradient(145deg,rgba(212,168,75,.07) 0%,rgba(212,168,75,.02) 55%,rgba(212,168,75,.045) 100%);
@@ -415,12 +432,7 @@ box-shadow:
   0 8px 16px rgba(0,0,0,.4),
   0 0 60px rgba(212,168,75,.06),
   inset 0 1px 0 rgba(255,255,255,.06);
---pb-rot:0deg;--pb-base-y:0px;--pb-float:0px;--pb-hover:0px;--pb-scale:1;
-transform-style:preserve-3d;transform-origin:50% 55%;
-transform:rotateY(var(--pb-rot)) translate3d(0,calc(var(--pb-base-y) + var(--pb-float) + var(--pb-hover)),0) scale(var(--pb-scale))!important;
-animation:pb-float-anim 12s cubic-bezier(.45,.05,.55,.95) infinite;
-will-change:transform;
-transition:border-color .4s,box-shadow .4s var(--ease),opacity .8s var(--ease),--pb-hover .55s var(--ease)}
+transition:border-color .4s,box-shadow .4s var(--ease)}
 .price-box::before{content:'';position:absolute;inset:0;border-radius:22px;pointer-events:none;
   background:
     radial-gradient(ellipse 120% 60% at 50% -10%,rgba(255,232,180,.12),transparent 55%),
@@ -428,12 +440,11 @@ transition:border-color .4s,box-shadow .4s var(--ease),opacity .8s var(--ease),-
   opacity:.7;transition:opacity .4s;z-index:0}
 .price-box:hover::before{opacity:1}
 .price-box>*{position:relative;z-index:1}
-.price-box:hover{border-color:rgba(212,168,75,.45);
+.pkg-col:hover .price-box{border-color:rgba(212,168,75,.45);
   box-shadow:
     0 40px 90px rgba(0,0,0,.55),
     0 14px 28px rgba(0,0,0,.38),
-    inset 0 1px 0 rgba(255,255,255,.1);
-  --pb-hover:-8px}
+    inset 0 1px 0 rgba(255,255,255,.1)}
 .price-box.featured{border-color:rgba(212,168,75,.5);border-top-color:rgba(212,168,75,.65);
 background:
   linear-gradient(145deg,rgba(212,168,75,.1) 0%,rgba(212,168,75,.035) 55%,rgba(212,168,75,.075) 100%);
@@ -443,9 +454,6 @@ box-shadow:
   0 10px 22px rgba(0,0,0,.42),
   0 0 90px rgba(212,168,75,.14),
   inset 0 1px 0 rgba(255,255,255,.08)}
-
-.price-grid>.price-box:first-child{--pb-rot:11deg;animation-delay:-3s;--pb-scale:.9}
-.price-grid>.price-box:last-child{--pb-rot:-11deg;animation-delay:0s;--pb-scale:.9}
 
 @keyframes pb-float-anim{
   0%{--pb-float:0px}
@@ -466,65 +474,193 @@ box-shadow:
 .sec-sublead{max-width:580px;margin:-20px auto 48px;font-size:14px;line-height:1.75;color:var(--muted);text-align:center}
 @media(max-width:700px){.sec-sublead{font-size:13px;margin-bottom:36px}}
 
-/* RÄCKVIDD-BOOST TOGGLE — ljusare skogsgrön + iOS-style switch, fast storlek */
-.ads-toggle{display:flex;justify-content:center;margin:-12px auto 44px;max-width:640px}
-.ads-pill{display:inline-flex;align-items:center;gap:16px;padding:13px 26px;
-  background:rgba(8,68,36,.55);
-  backdrop-filter:blur(28px) saturate(1.4);-webkit-backdrop-filter:blur(28px) saturate(1.4);
-  border:1px solid rgba(212,168,75,.18);border-radius:100px;
-  color:var(--ink);font-family:'Inter',sans-serif;cursor:pointer;
-  transition:background .5s var(--ease),border-color .5s var(--ease),transform .25s var(--ease),box-shadow .5s var(--ease);
-  position:relative;
-  box-shadow:0 4px 24px rgba(0,0,0,.32),0 0 0 1px rgba(0,0,0,.1)}
-.ads-pill:hover{background:rgba(12,90,48,.72);border-color:rgba(212,168,75,.35);transform:translateY(-1px);
-  box-shadow:0 8px 40px rgba(0,0,0,.4),0 0 50px rgba(52,199,89,.1)}
-.ads-pill:active{transform:translateY(0)}
-
-/* iOS-style switch: grey track när av, iOS-grön när på */
-.ads-switch{width:48px;height:28px;background:rgba(120,120,128,.32);border-radius:100px;
-  position:relative;transition:background-color .3s ease;flex-shrink:0;border:none}
-.ads-switch::after{content:'';position:absolute;top:2px;left:2px;width:24px;height:24px;
-  background:#fff;border-radius:50%;
-  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
-  box-shadow:0 3px 8px rgba(0,0,0,.18),0 3px 1px rgba(0,0,0,.06),0 0 0 .5px rgba(0,0,0,.04)}
-.ads-pill[aria-pressed="true"] .ads-switch{background:#34C759}
-.ads-pill[aria-pressed="true"] .ads-switch::after{transform:translateX(20px)}
-
-.ads-text{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left}
-.ads-label{font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--ink);
-  transition:color .35s var(--ease)}
-.ads-pill[aria-pressed="true"] .ads-label{color:var(--gold)}
-
-/* Båda detail-texter staplas i samma grid-cell — pillen får alltid bredd = max(default, active),
-   och storleken ändras INTE vid toggle. Endast opacity-cross-fade. */
-.ads-detail-wrap{display:grid;align-items:center}
-.ads-detail{grid-row:1;grid-column:1;white-space:nowrap;
-  font-size:11px;letter-spacing:.02em;color:var(--muted);
-  transition:opacity .35s var(--ease),color .35s var(--ease)}
-.ads-detail-default{opacity:1}
-.ads-detail-active{opacity:0;color:var(--gold)}
-.ads-pill[aria-pressed="true"] .ads-detail-default{opacity:0}
-.ads-pill[aria-pressed="true"] .ads-detail-active{opacity:1}
-
 .price-total.boost-pulse{animation:boostPulse .9s var(--ease)}
 .price-orig.boost-pulse{animation:boostPulseSub .9s var(--ease)}
 @keyframes boostPulse{0%{transform:scale(1)}40%{transform:scale(1.04);text-shadow:0 0 24px rgba(212,168,75,.5)}100%{transform:scale(1)}}
 @keyframes boostPulseSub{0%,100%{opacity:.28}50%{opacity:.55}}
-@media(max-width:560px){
-  .ads-pill{padding:11px 18px;gap:12px}
-  .ads-label{font-size:12px}
-  .ads-detail{font-size:10px}
-  .ads-switch{width:44px;height:26px}
-  .ads-switch::after{width:22px;height:22px}
-  .ads-pill[aria-pressed="true"] .ads-switch::after{transform:translateX(18px)}
-}
 .price-includes{margin-top:32px;display:flex;flex-direction:column;gap:10px;text-align:left}
 .pi{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:rgba(242,237,228,.65);line-height:1.5}
 .pi::before{content:'·';color:var(--gold);font-size:16px;flex-shrink:0;line-height:1.2;margin-top:1px}
 .pi.hi{color:rgba(242,237,228,.9);font-weight:500}
+
+/* Per-package Reach Boost — green "handle" container ABOVE the price-card. */
+.pkg-boost{
+  width:100%;
+  display:flex;flex-direction:column;
+  background:rgba(8,68,36,.42);
+  border:1px solid rgba(212,168,75,.18);
+  border-radius:18px;
+  color:var(--ink);font-family:'Inter',sans-serif;
+  text-align:left;
+  position:relative;
+  margin-bottom:18px;
+  z-index:2;
+  transition:background .35s var(--ease),border-color .35s var(--ease),box-shadow .35s var(--ease);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+.pkg-boost:hover{
+  background:rgba(12,90,48,.55);
+  border-color:rgba(212,168,75,.32);
+}
+.pkg-boost[aria-pressed="true"]{
+  background:rgba(12,90,48,.62);
+  border-color:rgba(212,168,75,.42);
+  box-shadow:0 -6px 24px rgba(52,199,89,.1),inset 0 1px 0 rgba(255,255,255,.06);
+}
+/* Header row — always visible — switch + tag + title + price. */
+.pkg-boost-head{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:14px 18px;
+  width:100%;
+  background:transparent;border:0;
+  font:inherit;color:inherit;
+  cursor:pointer;text-align:left;
+  border-radius:18px 18px 0 0;
+  transition:background .25s var(--ease);
+}
+.pkg-boost-head:hover{background:rgba(255,255,255,.02)}
+.pkg-boost-head:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.pkg-boost-switch{
+  width:38px;height:22px;flex-shrink:0;margin-top:2px;
+  background:rgba(120,120,128,.32);border-radius:100px;
+  position:relative;transition:background-color .3s ease;
+}
+.pkg-boost-switch::after{
+  content:'';position:absolute;top:2px;left:2px;
+  width:18px;height:18px;background:#fff;border-radius:50%;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 2px 6px rgba(0,0,0,.2),0 0 0 .5px rgba(0,0,0,.04);
+}
+.pkg-boost[aria-pressed="true"] .pkg-boost-switch{background:#34C759}
+.pkg-boost[aria-pressed="true"] .pkg-boost-switch::after{transform:translateX(16px)}
+.pkg-boost-text{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.pkg-boost-tag{
+  align-self:flex-start;
+  font-family:'Inter',sans-serif;font-size:9px;font-weight:600;
+  letter-spacing:.22em;text-transform:uppercase;
+  padding:3px 9px;margin-bottom:3px;
+  border-radius:100px;
+  background:rgba(212,168,75,.08);
+  border:1px solid rgba(212,168,75,.22);
+  color:rgba(242,237,228,.55);
+  transition:background .35s var(--ease),border-color .35s var(--ease),color .35s var(--ease);
+}
+.pkg-boost-tag em{font-style:normal;color:var(--gold);font-weight:700}
+.pkg-boost:hover .pkg-boost-tag{background:rgba(212,168,75,.16);border-color:rgba(212,168,75,.4)}
+.pkg-boost[aria-pressed="true"] .pkg-boost-tag{background:rgba(52,199,89,.14);border-color:rgba(52,199,89,.35);color:rgba(242,237,228,.85)}
+.pkg-boost[aria-pressed="true"] .pkg-boost-tag em{color:#5ed47a}
+.pkg-boost-title{
+  font-size:13px;font-weight:600;letter-spacing:.015em;color:var(--ink);
+  display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+  transition:color .35s var(--ease);
+}
+.pkg-boost[aria-pressed="true"] .pkg-boost-title{color:var(--gold)}
+.pkg-boost-price{
+  font-size:11px;font-weight:600;color:var(--gold);
+  letter-spacing:.06em;text-transform:uppercase;
+  display:inline-block;
+  transition:opacity .3s var(--ease);
+}
+.pkg-boost-price.is-zero{opacity:.4}
+.pkg-boost[aria-pressed="false"] .pkg-boost-price{display:none}
+
+/* Collapsible body — desc + per-card slider */
+.pkg-boost-body{
+  display:grid;
+  grid-template-rows:0fr;
+  transition:grid-template-rows .55s cubic-bezier(.45,.05,.55,.95);
+  width:100%;
+}
+.pkg-boost[aria-pressed="true"] .pkg-boost-body{
+  grid-template-rows:1fr;
+}
+.pkg-boost-body-inner{
+  overflow:hidden;
+  min-height:0;
+  padding:0 18px;
+}
+.pkg-boost-desc{
+  font-size:12px;color:rgba(242,237,228,.55);
+  line-height:1.55;letter-spacing:.005em;
+  margin:0;padding:0 0 14px;
+  transition:color .35s var(--ease);
+}
+.pkg-boost[aria-pressed="true"] .pkg-boost-desc{color:rgba(242,237,228,.78)}
+.pkg-boost-stat{
+  color:var(--gold);font-weight:600;letter-spacing:.015em;
+  white-space:nowrap;
+}
+.pkg-boost[aria-pressed="true"] .pkg-boost-stat{
+  text-shadow:0 0 18px rgba(212,168,75,.35);
+}
+
+/* Per-card budget slider — inside expanded green box */
+.pkg-slider{
+  padding:14px 0 16px;
+  border-top:1px solid rgba(212,168,75,.14);
+}
+.pkg-slider-lbl{
+  display:block;
+  font-family:'Inter',sans-serif;font-size:9.5px;font-weight:600;
+  letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(212,168,75,.78);
+  margin-bottom:12px;
+}
+.pkg-range{
+  -webkit-appearance:none;appearance:none;width:100%;height:22px;
+  background:transparent;outline:0;cursor:pointer;margin:0;
+}
+.pkg-range::-webkit-slider-runnable-track{height:4px;border-radius:99px;
+  background:linear-gradient(to right,var(--gold) 0%,var(--gold) var(--pk-fill,33%),rgba(212,168,75,.18) var(--pk-fill,33%),rgba(212,168,75,.18) 100%)}
+.pkg-range::-moz-range-track{height:4px;border-radius:99px;background:rgba(212,168,75,.18)}
+.pkg-range::-moz-range-progress{height:4px;border-radius:99px;background:var(--gold)}
+.pkg-range::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--gold);
+  margin-top:-7px;
+  cursor:grab;
+  border:2px solid #1a1410;
+  box-shadow:0 3px 10px rgba(0,0,0,.45),0 0 14px rgba(212,168,75,.45);
+  transition:transform .2s var(--ease),box-shadow .2s var(--ease);
+}
+.pkg-range::-moz-range-thumb{
+  width:18px;height:18px;border-radius:50%;
+  background:var(--gold);cursor:grab;border:2px solid #1a1410;
+  box-shadow:0 3px 10px rgba(0,0,0,.45),0 0 14px rgba(212,168,75,.45);
+}
+.pkg-range:hover::-webkit-slider-thumb{transform:scale(1.12);box-shadow:0 4px 14px rgba(0,0,0,.55),0 0 18px rgba(212,168,75,.6)}
+.pkg-range:active::-webkit-slider-thumb{transform:scale(1.22);cursor:grabbing}
+.pkg-ticks{
+  display:flex;justify-content:space-between;
+  margin-top:8px;padding:0 1px;
+  font-family:'Inter',sans-serif;font-size:9.5px;font-weight:500;
+  letter-spacing:.06em;color:rgba(242,237,228,.4);
+  font-feature-settings:"tnum";
+}
+.pkg-tick{
+  display:inline-flex;flex-direction:column;align-items:center;gap:4px;
+  cursor:pointer;
+  transition:color .25s var(--ease);
+  position:relative;padding-top:2px;
+}
+.pkg-tick::before{
+  content:'';position:absolute;top:-9px;
+  width:1px;height:5px;background:rgba(212,168,75,.25);
+}
+.pkg-tick.is-active{color:var(--gold);font-weight:700}
+.pkg-tick.is-active::before{background:var(--gold);width:2px;box-shadow:0 0 8px rgba(212,168,75,.6)}
+.pkg-tick:hover{color:rgba(242,237,228,.75)}
+
+@media(max-width:560px){
+  .pkg-boost-head{gap:11px;padding:12px 14px}
+  .pkg-boost-body-inner{padding:0 14px}
+  .pkg-boost-title{font-size:12px}
+  .pkg-boost-desc{font-size:11px}
+}
 @media(max-width:700px){
   .price-grid{grid-template-columns:1fr;perspective:none}
-  .price-box,.price-grid>.price-box:first-child,.price-grid>.price-box:last-child{--pb-rot:0deg;--pb-base-y:0px}
+  .pkg-col,.price-grid>.pkg-col:first-child,.price-grid>.pkg-col:last-child{--pb-rot:0deg;--pb-base-y:0px;--pb-scale:1;transform:none!important}
   .price-box{padding:36px 24px}
 }
 
@@ -955,72 +1091,115 @@ position:relative;overflow:hidden;transition:color .35s}
     <p class="sec-lbl rv">Investment</p>
     <h2 class="sec-h2 rv">Three ways to build <em>narrative and reach.</em></h2>
 
-    <div class="ads-toggle rv" id="ads-toggle-wrap">
-      <button class="ads-pill" id="ads-toggle" type="button" aria-pressed="false">
-        <span class="ads-switch" aria-hidden="true"></span>
-        <span class="ads-text">
-          <span class="ads-label">Reach boost</span>
-          <span class="ads-detail-wrap">
-            <span class="ads-detail ads-detail-default">+1 000 € for 100,000 guaranteed views via Meta&nbsp;Ads</span>
-            <span class="ads-detail ads-detail-active">Active &middot; 100,000 guaranteed views via Meta&nbsp;Ads</span>
-          </span>
-        </span>
-      </button>
-    </div>
-
     <div class="price-grid">
 
-      <!-- Starter -->
-      <div class="price-box rv d1">
-        <h3 class="price-title">Starter</h3>
-        <p class="price-sub">1 video &middot; 2 stories with CTA &middot; 10 lifestyle images</p>
-        <p class="price-total-lbl">Price</p>
-        <p class="price-total" data-base="1650" data-boost="2650">1 650</p>
-        <span class="price-unit">EUR</span>
-        <div class="price-includes">
-          <p class="pi hi">1 video published on Villa Sjövik&apos;s channels</p>
-          <p class="pi hi">2 stories on Villa Sjövik&apos;s channels &mdash; direct link and CTA</p>
-          <p class="pi hi">10 lifestyle images for your own channels and website</p>
-          <p class="pi">Full usage rights to all material</p>
-          <p class="pi">Styling, filming and editing included</p>
+      <!-- Starter (featured) -->
+      <div class="pkg-col featured rv d1" data-pkg-col="starter">
+        <div class="pkg-boost" role="group" aria-pressed="false" data-pkg="starter">
+          <button type="button" class="pkg-boost-head" aria-pressed="false" aria-controls="pkg-boost-body-starter" aria-label="Activate Meta reach for the Starter package">
+            <span class="pkg-boost-switch" aria-hidden="true"></span>
+            <span class="pkg-boost-text">
+              <span class="pkg-boost-tag">Optional &middot; <em>Recommended</em></span>
+              <span class="pkg-boost-title">Activate Meta reach <span class="pkg-boost-price" data-bt-price="starter">+1&nbsp;000 &euro;</span></span>
+            </span>
+          </button>
+          <div class="pkg-boost-body" id="pkg-boost-body-starter" aria-hidden="true">
+            <div class="pkg-boost-body-inner">
+              <p class="pkg-boost-desc" data-pkg-desc="starter">Over <strong class="pkg-boost-stat" data-bt-stat="starter">100,000</strong> extra views! Meta retargeting re-shows the video with a clickable link ON the video itself, straight in Instagram and Facebook &mdash; for a seamless hand-off that drives the traffic directly home to your website.</p>
+              <p class="pkg-boost-desc-zero" data-pkg-desc-zero="starter" hidden>Drag the slider to a budget below to see how many extra impressions the package delivers.</p>
+              <div class="pkg-slider">
+                <label class="pkg-slider-lbl" for="pk-range-starter">Meta budget per production</label>
+                <input id="pk-range-starter" class="pkg-range" type="range" min="0" max="3" step="1" value="2" data-pkg-slider="starter" aria-label="Meta budget per production for the Starter package"/>
+                <div class="pkg-ticks" aria-hidden="true">
+                  <span class="pkg-tick" data-pkg-tick="starter" data-step="0">0 &euro;</span>
+                  <span class="pkg-tick" data-pkg-tick="starter" data-step="1">500</span>
+                  <span class="pkg-tick is-active" data-pkg-tick="starter" data-step="2">1 000</span>
+                  <span class="pkg-tick" data-pkg-tick="starter" data-step="3">2 000</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="price-box featured rv" data-pkg-box="starter">
+          <span class="price-ribbon">Recommended &middot; START HERE</span>
+          <h3 class="price-title">Starter</h3>
+          <p class="price-sub">1 video &middot; 2 stories with CTA &middot; 50 lifestyle images</p>
+          <p class="price-total-lbl">Price</p>
+          <p class="price-total" data-base="1650" data-boost="2650">1 650</p>
+          <span class="price-unit">EUR</span>
+          <div class="price-includes">
+            <p class="pi hi">1 video published on Villa Sjövik&apos;s channels &mdash; yours to run on your own channels and as ad material</p>
+            <p class="pi hi">2 stories with direct link and CTA</p>
+            <p class="pi hi">50 lifestyle images for your own channels and website</p>
+            <p class="pi">Full usage rights to all material</p>
+            <p class="pi">Styling, filming and editing included</p>
+          </div>
         </div>
       </div>
 
-      <!-- Project (featured) -->
-      <div class="price-box featured rv d2">
-        <span class="price-ribbon">Recommended &middot; TO START WITH</span>
-        <h3 class="price-title">Project</h3>
-        <p class="price-sub">3 videos &middot; 6 stories with CTA &middot; 30 lifestyle images</p>
-        <p class="price-total-lbl">Price</p>
-        <p class="price-orig" data-base="reg. 4 950 €" data-boost="reg. 5 950 €">reg. 4 950 €</p>
-        <p class="price-total" data-base="3500" data-boost="4500">3 500</p>
-        <span class="price-unit">EUR</span>
-        <div class="price-includes">
-          <p class="pi hi">3 videos published on Villa Sjövik&apos;s channels</p>
-          <p class="pi hi">6 stories on Villa Sjövik&apos;s channels &mdash; direct link and CTA</p>
-          <p class="pi hi">30 lifestyle images for your own channels and website</p>
-          <p class="pi">Full usage rights to all material</p>
-          <p class="pi">Styling, filming and editing included</p>
+      <!-- Project -->
+      <div class="pkg-col rv d2" data-pkg-col="project">
+        <div class="pkg-boost" role="group" aria-pressed="false" data-pkg="project">
+          <button type="button" class="pkg-boost-head" aria-pressed="false" aria-controls="pkg-boost-body-project" aria-label="Activate Meta reach for the Project package">
+            <span class="pkg-boost-switch" aria-hidden="true"></span>
+            <span class="pkg-boost-text">
+              <span class="pkg-boost-tag">Optional &middot; <em>Recommended</em></span>
+              <span class="pkg-boost-title">Activate Meta reach <span class="pkg-boost-price" data-bt-price="project">+2&nbsp;000 &euro;</span></span>
+            </span>
+          </button>
+          <div class="pkg-boost-body" id="pkg-boost-body-project" aria-hidden="true">
+            <div class="pkg-boost-body-inner">
+              <p class="pkg-boost-desc" data-pkg-desc="project">All three productions get retargeting. The videos are re-shown to those who already watched &mdash; over <strong class="pkg-boost-stat" data-bt-stat="project">300,000</strong> extra views! Meta retargeting re-shows each video with a clickable link ON the video itself, straight in Instagram and Facebook &mdash; for a seamless hand-off that drives the traffic directly home to your website.</p>
+              <p class="pkg-boost-desc-zero" data-pkg-desc-zero="project" hidden>Drag the slider to a budget below to see how many extra impressions the package delivers.</p>
+              <div class="pkg-slider">
+                <label class="pkg-slider-lbl" for="pk-range-project">Meta budget per production</label>
+                <input id="pk-range-project" class="pkg-range" type="range" min="0" max="3" step="1" value="2" data-pkg-slider="project" aria-label="Meta budget per production for the Project package"/>
+                <div class="pkg-ticks" aria-hidden="true">
+                  <span class="pkg-tick" data-pkg-tick="project" data-step="0">0 &euro;</span>
+                  <span class="pkg-tick" data-pkg-tick="project" data-step="1">500</span>
+                  <span class="pkg-tick is-active" data-pkg-tick="project" data-step="2">1 000</span>
+                  <span class="pkg-tick" data-pkg-tick="project" data-step="3">2 000</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="price-box rv" data-pkg-box="project">
+          <h3 class="price-title">Project</h3>
+          <p class="price-sub">3 videos &middot; 6 stories with CTA &middot; 30 lifestyle images</p>
+          <p class="price-total-lbl">Price</p>
+          <p class="price-orig" data-base="reg. 4 950 €" data-boost="reg. 6 950 €">reg. 4 950 €</p>
+          <p class="price-total" data-base="3500" data-boost="5500">3 500</p>
+          <span class="price-unit">EUR</span>
+          <div class="price-includes">
+            <p class="pi hi">3 videos published on Villa Sjövik&apos;s channels</p>
+            <p class="pi hi">6 stories on Villa Sjövik&apos;s channels &mdash; direct link and CTA</p>
+            <p class="pi hi">30 lifestyle images for your own channels and website</p>
+            <p class="pi">Full usage rights to all material</p>
+            <p class="pi">Styling, filming and editing included</p>
+          </div>
         </div>
       </div>
 
       <!-- Premium -->
-      <div class="price-box rv d3">
-        <span class="price-ribbon" style="background:#1a1410;color:var(--gold);border:1px solid rgba(212,168,75,.5)">Performance &middot; PREMIUM</span>
-        <h3 class="price-title">Premium</h3>
-        <p class="price-sub">Project package &middot; paid media rights &middot; &euro;1 000 ads pilot</p>
-        <p class="price-total-lbl">Price</p>
-        <p class="price-orig">reg. 9 500 &euro;</p>
-        <p class="price-total">7 000</p>
-        <span class="price-unit">EUR</span>
-        <div class="price-includes">
-          <p class="pi hi">3 videos published on Villa Sjövik&apos;s channels</p>
-          <p class="pi hi">6 stories on Villa Sjövik&apos;s channels &mdash; direct link and CTA</p>
-          <p class="pi hi">30 lifestyle images for your own channels and website</p>
-          <p class="pi hi">Paid media rights &mdash; full ad usage across all 3 videos, 6 stories and 30 images</p>
-          <p class="pi hi">Meta ads pilot &mdash; &euro;1 000 budget + 2 short retargeting cuts shaped from your main ad creative</p>
-          <p class="pi">Full usage rights to all material</p>
-          <p class="pi">Styling, filming and editing included</p>
+      <div class="pkg-col rv d3" data-pkg-col="premium">
+        <div class="price-box rv" data-pkg-box="premium">
+          <span class="price-ribbon" style="background:#1a1410;color:var(--gold);border:1px solid rgba(212,168,75,.5)">Performance &middot; PREMIUM</span>
+          <h3 class="price-title">Premium</h3>
+          <p class="price-sub">Project package &middot; paid media rights &middot; &euro;1 000 ads pilot</p>
+          <p class="price-total-lbl">Price</p>
+          <p class="price-orig">reg. 9 500 &euro;</p>
+          <p class="price-total">7 000</p>
+          <span class="price-unit">EUR</span>
+          <div class="price-includes">
+            <p class="pi hi">3 videos published on Villa Sjövik&apos;s channels</p>
+            <p class="pi hi">6 stories on Villa Sjövik&apos;s channels &mdash; direct link and CTA</p>
+            <p class="pi hi">30 lifestyle images for your own channels and website</p>
+            <p class="pi hi">Paid media rights &mdash; full ad usage across all 3 videos, 6 stories and 30 images</p>
+            <p class="pi hi">Meta ads pilot &mdash; &euro;1 000 budget + 2 short retargeting cuts shaped from your main ad creative</p>
+            <p class="pi">Full usage rights to all material</p>
+            <p class="pi">Styling, filming and editing included</p>
+          </div>
         </div>
       </div>
 
@@ -1382,44 +1561,235 @@ if(spotSec){
   });
 })();
 
-/* RÄCKVIDD-BOOST TOGGLE */
+/* === PER-PACKAGE PKG-BOOST (Meta reach per package) === */
 (function(){
-  const toggle=document.getElementById('ads-toggle');
-  if(!toggle)return;
-  const totals=document.querySelectorAll('.price-total[data-base][data-boost]');
-  const origs=document.querySelectorAll('.price-orig[data-base][data-boost]');
-  let active=false;
+  // Per-package view-rate so the spec defaults land exactly:
+  //   Starter  1 000 € budget -> 100,000 views  (rate 100)
+  //   Project  1 000 € budget -> 300,000 views  (rate 150 x mult 2)
+  const VIEWS_PER_EUR={starter:100, project:150};
 
-  function fmt(n){return Math.round(n).toLocaleString('fi-FI')}
-  function animateNumber(el,from,to,duration){
+  function fmt(n){return Math.round(n).toLocaleString('sv-SE')}
+  function fmtThin(n){return Math.round(n).toLocaleString('sv-SE').replace(/\s/g,' ')}
+  function animateNumber(el,from,to,duration,formatter){
+    const fmtFn=formatter||fmt;
     const start=performance.now();
     function tick(now){
       const t=Math.min((now-start)/duration,1);
       const eased=1-Math.pow(1-t,3);
-      el.textContent=fmt(from+(to-from)*eased);
+      el.textContent=fmtFn(from+(to-from)*eased);
       if(t<1)requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
   }
 
-  toggle.addEventListener('click',()=>{
-    active=!active;
-    toggle.setAttribute('aria-pressed',active?'true':'false');
-    totals.forEach(el=>{
-      const base=+el.dataset.base, boost=+el.dataset.boost;
-      const from=active?base:boost, to=active?boost:base;
-      animateNumber(el,from,to,720);
-      el.classList.remove('boost-pulse');
-      void el.offsetWidth;
-      el.classList.add('boost-pulse');
-    });
-    origs.forEach(el=>{
-      el.textContent=active?el.dataset.boost:el.dataset.base;
-      el.classList.remove('boost-pulse');
-      void el.offsetWidth;
-      el.classList.add('boost-pulse');
+  // Step values (EUR): 0 -> 0 €, 1 -> 500, 2 -> 1 000, 3 -> 2 000
+  const STEP_VALUES=[0,500,1000,2000];
+  const cardBudget={starter:1000, project:1000};
+  const PKG_MULT={starter:1, project:2};
+
+  function stepFromBudget(b){
+    let idx=STEP_VALUES.indexOf(b);
+    if(idx>=0) return idx;
+    let best=0, bestDiff=Infinity;
+    for(let i=0;i<STEP_VALUES.length;i++){
+      const d=Math.abs(STEP_VALUES[i]-b);
+      if(d<bestDiff){bestDiff=d;best=i;}
+    }
+    return best;
+  }
+  function boostCostForCard(pkg){return cardBudget[pkg]*PKG_MULT[pkg];}
+  function viewsForCard(pkg){return cardBudget[pkg]*VIEWS_PER_EUR[pkg]*PKG_MULT[pkg];}
+
+  function refreshCard(pkg,opts){
+    const col=document.querySelector('[data-pkg-col="'+pkg+'"]');
+    if(!col)return;
+    const box=col.querySelector('[data-pkg-box="'+pkg+'"]');
+    const total=box && box.querySelector('.price-total[data-base][data-boost]');
+    const orig=box && box.querySelector('.price-orig[data-base][data-boost]');
+    const priceLbl=col.querySelector('[data-bt-price="'+pkg+'"]');
+    const statLbl=col.querySelector('[data-bt-stat="'+pkg+'"]');
+    const btn=col.querySelector('.pkg-boost');
+    const slider=col.querySelector('[data-pkg-slider="'+pkg+'"]');
+    const ticks=col.querySelectorAll('[data-pkg-tick="'+pkg+'"]');
+    if(!total)return;
+
+    const isOn=btn && btn.getAttribute('aria-pressed')==='true';
+    const cost=boostCostForCard(pkg);
+
+    const base=+total.dataset.base;
+    const newBoost=base+cost;
+    total.dataset.boost=newBoost;
+    if(orig){
+      const origBaseNum=parseInt(orig.dataset.base.replace(/[^\d]/g,''),10);
+      const origBoostNum=origBaseNum+cost;
+      orig.dataset.boost='reg. '+fmt(origBoostNum)+' €';
+    }
+
+    if(priceLbl){
+      if(cost===0){
+        priceLbl.innerHTML='+0&nbsp;€';
+        priceLbl.classList.add('is-zero');
+      }else{
+        priceLbl.innerHTML='+'+fmtThin(cost)+'&nbsp;€';
+        priceLbl.classList.remove('is-zero');
+      }
+    }
+    const desc=col.querySelector('[data-pkg-desc="'+pkg+'"]');
+    const descZero=col.querySelector('[data-pkg-desc-zero="'+pkg+'"]');
+    const views=viewsForCard(pkg);
+    if(views===0){
+      if(desc) desc.hidden=true;
+      if(descZero) descZero.hidden=false;
+    }else{
+      if(desc) desc.hidden=false;
+      if(descZero) descZero.hidden=true;
+      if(statLbl) statLbl.innerHTML=fmtThin(views);
+    }
+
+    if(slider){
+      const step=stepFromBudget(cardBudget[pkg]);
+      if(!(opts&&opts.skipSlider)){slider.value=step;}
+      const pct=(step/3)*100;
+      slider.style.setProperty('--pk-fill',pct+'%');
+      ticks.forEach(t=>{t.classList.toggle('is-active', +t.dataset.step===step);});
+    }
+
+    if(isOn){
+      const currentDisplayed=parseInt(total.textContent.replace(/[^\d]/g,''),10);
+      const target=base+cost;
+      if(currentDisplayed!==target){
+        animateNumber(total,currentDisplayed,target,420);
+        total.classList.remove('boost-pulse');void total.offsetWidth;total.classList.add('boost-pulse');
+      }
+      if(orig){orig.textContent= cost===0 ? orig.dataset.base : orig.dataset.boost;}
+    }else{
+      if(total.textContent.replace(/[^\d]/g,'')!==String(base)){total.textContent=fmt(base);}
+      if(orig){orig.textContent=orig.dataset.base;}
+    }
+  }
+
+  function setCardBudget(pkg,eur,opts){
+    cardBudget[pkg]=eur;
+    refreshCard(pkg,opts);
+  }
+
+  // Wire toggles — click on .pkg-boost-head toggles the wrapper
+  document.querySelectorAll('.pkg-boost-head').forEach(headBtn=>{
+    const wrapper=headBtn.closest('.pkg-boost');
+    if(!wrapper)return;
+    const pkg=wrapper.dataset.pkg;
+    if(!pkg)return;
+    headBtn.addEventListener('click',()=>{
+      const wasActive=wrapper.getAttribute('aria-pressed')==='true';
+      const next=!wasActive;
+      wrapper.setAttribute('aria-pressed',next?'true':'false');
+      headBtn.setAttribute('aria-pressed',next?'true':'false');
+      const body=wrapper.querySelector('.pkg-boost-body');
+      if(body) body.setAttribute('aria-hidden',next?'false':'true');
+
+      const col=document.querySelector('[data-pkg-col="'+pkg+'"]');
+      const total=col && col.querySelector('.price-total[data-base][data-boost]');
+      if(total){
+        const base=+total.dataset.base, boost=+total.dataset.boost;
+        const from=next?base:boost, to=next?boost:base;
+        if(from!==to){
+          animateNumber(total,from,to,720);
+          total.classList.remove('boost-pulse');void total.offsetWidth;total.classList.add('boost-pulse');
+        }
+        const orig=col.querySelector('.price-orig[data-base][data-boost]');
+        if(orig){
+          orig.textContent=next?orig.dataset.boost:orig.dataset.base;
+          orig.classList.remove('boost-pulse');void orig.offsetWidth;orig.classList.add('boost-pulse');
+        }
+      }
+      refreshCard(pkg);
     });
   });
+
+  // Wire per-card sliders
+  document.querySelectorAll('[data-pkg-slider]').forEach(slider=>{
+    const pkg=slider.dataset.pkgSlider;
+    slider.addEventListener('input',e=>{
+      const step=+e.target.value;
+      const eur=STEP_VALUES[step]||0;
+      setCardBudget(pkg,eur,{skipSlider:true});
+    });
+    slider.addEventListener('click',e=>e.stopPropagation());
+    slider.addEventListener('mousedown',e=>e.stopPropagation());
+    slider.addEventListener('touchstart',e=>e.stopPropagation(),{passive:true});
+    slider.addEventListener('keydown',e=>e.stopPropagation());
+  });
+
+  // Wire tick labels — clickable to jump to step
+  document.querySelectorAll('[data-pkg-tick]').forEach(tick=>{
+    tick.addEventListener('click',e=>{
+      e.stopPropagation();
+      const pkg=tick.dataset.pkgTick;
+      const step=+tick.dataset.step;
+      setCardBudget(pkg,STEP_VALUES[step]||0);
+    });
+  });
+
+  // Initial render
+  refreshCard('starter');
+  refreshCard('project');
+})();
+
+/* META REACH AUTO-DEMO — the Starter (featured) package boost is toggled ON
+   automatically for a brief moment when the investment section scrolls into view,
+   then switched OFF again -> the price settles back on the base price. Shows the
+   campaign can be scaled with Meta reach without raising the entry price. Runs once
+   per session; aborts if the visitor touches the toggle. */
+(function(){
+  const sec=document.getElementById('sec-pr');
+  const wrap=document.querySelector('.pkg-col.featured .pkg-boost');
+  const btn=wrap&&wrap.querySelector('.pkg-boost-head');
+  if(!sec||!wrap||!btn)return;
+
+  try{if(sessionStorage.getItem('weltevree-boost-autoactivated')==='true')return}catch(e){}
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+
+  const DELAY_MS=1600;
+  const HOLD_MS=2600;
+  const VIEW_THRESHOLD=0.45;
+
+  let triggered=false,demoActive=false,demoInternal=false,viewTimer=null;
+  const tids=[];
+  function clearTids(){tids.forEach(id=>clearTimeout(id));tids.length=0;}
+  function endDemo(){demoActive=false;try{sessionStorage.setItem('weltevree-boost-autoactivated','true')}catch(e){}}
+
+  // Abort the demo if the visitor clicks the toggle themselves
+  btn.addEventListener('click',()=>{if(demoActive&&!demoInternal){clearTids();endDemo();}});
+
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(triggered)return;
+      if(e.isIntersecting){
+        if(viewTimer===null){
+          viewTimer=setTimeout(()=>{
+            viewTimer=null;
+            if(triggered)return;
+            if(wrap.getAttribute('aria-pressed')==='true'){triggered=true;return;}
+            triggered=true;
+            obs.unobserve(sec);
+            demoActive=true;
+            demoInternal=true;btn.click();demoInternal=false;
+            tids.push(setTimeout(()=>{
+              if(!demoActive)return;
+              if(wrap.getAttribute('aria-pressed')==='true'){
+                demoInternal=true;btn.click();demoInternal=false;
+              }
+              tids.push(setTimeout(endDemo,400));
+            },HOLD_MS));
+          },DELAY_MS);
+        }
+      }else{
+        if(viewTimer!==null){clearTimeout(viewTimer);viewTimer=null;}
+      }
+    });
+  },{threshold:VIEW_THRESHOLD});
+
+  obs.observe(sec);
 })();
 
 /* BOOKING FLOW */
