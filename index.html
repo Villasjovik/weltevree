@@ -417,11 +417,15 @@ background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:
   will-change:transform;
   transition:opacity .8s var(--ease),--pb-hover .55s var(--ease);
 }
-.price-grid>.pkg-col:first-child{--pb-rot:11deg;animation-delay:-3s}
-.price-grid>.pkg-col:nth-child(2){animation-delay:-1.5s}
-.price-grid>.pkg-col:last-child{--pb-rot:-11deg;animation-delay:0s}
+/* DOM order: Starter (featured, left) · Project (middle) · Premium (right).
+   Featured Starter is UPRIGHT (no rotateY) + scaled-up hero. The two non-featured
+   side cards both tilt INWARD toward Starter (toward the left/hero) via negative
+   rotateY — Project a gentle inward tilt, Premium a slightly stronger one —
+   keeping the 3D "fan" aesthetic. */
+.price-grid>.pkg-col:nth-child(2){--pb-rot:-8deg;animation-delay:-1.5s}
+.price-grid>.pkg-col:last-child{--pb-rot:-13deg;animation-delay:0s}
 .price-grid>.pkg-col:not(.featured){--pb-scale:.9}
-.price-grid>.pkg-col.featured{--pb-scale:1.08;z-index:2}
+.price-grid>.pkg-col.featured{--pb-rot:0deg;--pb-scale:1.12;z-index:2;animation-delay:-3s}
 .pkg-col:hover{--pb-hover:-8px}
 
 .price-box{border:1px solid rgba(212,168,75,.2);border-top:2px solid rgba(212,168,75,.45);border-radius:22px;
@@ -465,6 +469,43 @@ box-shadow:
   0 0 0 1px rgba(212,168,75,.32),
   0 0 80px rgba(212,168,75,.26),
   inset 0 1px 0 rgba(255,255,255,.1)}
+
+/* === HEIGHT HIERARCHY — Starter is unmistakably the BIGGEST card ===
+   Boxes are flex columns with explicit min-heights so the read is deterministic
+   regardless of content length:
+   - Side cards (Project + Premium) share one min-height (equal to each other).
+   - Featured Starter gets a larger min-height; combined with scale 1.12 vs 0.9 its
+     rendered height AND width clearly exceed both side cards (raw box is taller too).
+   - Premium's content is the tallest, so its internal vertical rhythm is compacted
+     to fit the shared side-card height WITHOUT removing or rewording any content. */
+.price-box{display:flex;flex-direction:column}
+/* Side cards (Project + Premium) are locked to ONE shared height so they are
+   exactly equal to each other; Premium's heavier content is compacted (below) to
+   fit. The featured Starter's min-height is larger AND it is scaled 1.12 vs 0.9,
+   so its rendered height + width clearly exceed both side cards. */
+.price-grid>.pkg-col:not(.featured) .price-box{height:712px}
+.price-box.featured{min-height:728px}
+/* Hero Starter reads full and intentional — NOT padded-empty. Instead of one big
+   auto-margin gap, the vertical rhythm is distributed evenly: a roomier sub margin,
+   a comfortable price-block, and generously spaced includes so the whole card
+   breathes and fills its height naturally. */
+.price-box.featured .price-sub{margin-bottom:42px}
+.price-box.featured .price-total-lbl{margin-bottom:14px}
+.price-box.featured .price-includes{margin-top:38px;padding-top:34px;border-top:1px solid rgba(212,168,75,.16);gap:22px}
+/* Premium compaction — tighten its internal vertical rhythm so the heaviest card
+   (200 imgs + paid-media line + €3 000 block + 6 bullets) collapses into the
+   shared side-card height. Compaction only; all copy/content intact. */
+.price-grid>.pkg-col[data-pkg-col="premium"] .price-box{padding-top:40px;padding-bottom:34px}
+.price-grid>.pkg-col[data-pkg-col="premium"] .price-sub{margin-bottom:18px}
+.price-grid>.pkg-col[data-pkg-col="premium"] .price-total-lbl{margin-bottom:9px}
+.price-grid>.pkg-col[data-pkg-col="premium"] .price-orig{margin-bottom:4px}
+.price-grid>.pkg-col[data-pkg-col="premium"] .price-unit{margin-top:6px}
+.price-grid>.pkg-col[data-pkg-col="premium"] .price-includes{margin-top:16px;gap:5px}
+.price-grid>.pkg-col[data-pkg-col="premium"] .pi{line-height:1.28}
+.price-grid>.pkg-col[data-pkg-col="premium"] .pi-budget{margin-top:0;padding:9px 13px}
+.price-grid>.pkg-col[data-pkg-col="premium"] .pi-budget-top{margin-bottom:3px}
+.price-grid>.pkg-col[data-pkg-col="premium"] .pi-budget-amt{font-size:18px}
+.price-grid>.pkg-col[data-pkg-col="premium"] .pi-budget-line{font-size:10.5px;line-height:1.38}
 
 @keyframes pb-float-anim{
   0%{--pb-float:0px}
@@ -723,6 +764,9 @@ box-shadow:
   .price-grid{grid-template-columns:1fr;perspective:none}
   .pkg-col,.price-grid>.pkg-col:first-child,.price-grid>.pkg-col:nth-child(2),.price-grid>.pkg-col:last-child{--pb-rot:0deg;--pb-base-y:0px;--pb-scale:1;transform:none!important}
   .price-box{padding:36px 24px}
+  /* Single column — drop the desktop height hierarchy so cards size to content */
+  .price-box,.price-grid>.pkg-col:not(.featured) .price-box,.price-box.featured{min-height:0!important}
+  .price-box.featured .price-includes{margin-top:32px}
   .pkg-spacer{display:none}
 }
 
@@ -948,6 +992,8 @@ position:relative;overflow:hidden;transition:color .35s}
   .price-grid{grid-template-columns:1fr!important;perspective:none!important;gap:14px}
   .pkg-col,.price-grid>.pkg-col:first-child,.price-grid>.pkg-col:nth-child(2),.price-grid>.pkg-col:last-child{--pb-rot:0deg;--pb-base-y:0px;--pb-scale:1;transform:none!important}
   .pkg-spacer{display:none!important}
+  .price-box,.price-grid>.pkg-col:not(.featured) .price-box,.price-box.featured{min-height:0!important}
+  .price-box.featured .price-includes{margin-top:32px!important}
   .price-box{padding:28px 22px!important;transform:none!important}
   .mq-track{animation-duration:28s!important}
   .mq-track img{max-height:36px!important}
@@ -1157,52 +1203,8 @@ position:relative;overflow:hidden;transition:color .35s}
 
     <div class="price-grid">
 
-      <!-- Project (left, tilts inward) -->
-      <div class="pkg-col rv d1" data-pkg-col="project">
-        <div class="pkg-boost" role="group" aria-pressed="false" data-pkg="project">
-          <button type="button" class="pkg-boost-head" aria-pressed="false" aria-controls="pkg-boost-body-project" aria-label="Activate Meta reach for the Project package">
-            <span class="pkg-boost-switch" aria-hidden="true"></span>
-            <span class="pkg-boost-text">
-              <span class="pkg-boost-tag">Optional &middot; <em>Recommended</em></span>
-              <span class="pkg-boost-title">Activate Meta reach <span class="pkg-boost-price" data-bt-price="project">+2&nbsp;000 &euro;</span></span>
-            </span>
-          </button>
-          <div class="pkg-boost-body" id="pkg-boost-body-project" aria-hidden="true">
-            <div class="pkg-boost-body-inner">
-              <p class="pkg-boost-desc" data-pkg-desc="project">All three productions get retargeting. The videos are re-shown to those who already watched &mdash; over <strong class="pkg-boost-stat" data-bt-stat="project">300,000</strong> extra views! Meta retargeting re-shows each video with a clickable link ON the video itself, straight in Instagram and Facebook &mdash; for a seamless hand-off that drives the traffic directly home to your website.</p>
-              <p class="pkg-boost-desc-zero" data-pkg-desc-zero="project" hidden>Drag the slider to a budget below to see how many extra impressions the package delivers.</p>
-              <div class="pkg-slider">
-                <label class="pkg-slider-lbl" for="pk-range-project">Meta budget per production</label>
-                <input id="pk-range-project" class="pkg-range" type="range" min="0" max="3" step="1" value="2" data-pkg-slider="project" aria-label="Meta budget per production for the Project package"/>
-                <div class="pkg-ticks" aria-hidden="true">
-                  <span class="pkg-tick" data-pkg-tick="project" data-step="0">0 &euro;</span>
-                  <span class="pkg-tick" data-pkg-tick="project" data-step="1">500</span>
-                  <span class="pkg-tick is-active" data-pkg-tick="project" data-step="2">1 000</span>
-                  <span class="pkg-tick" data-pkg-tick="project" data-step="3">2 000</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="price-box rv" data-pkg-box="project">
-          <h3 class="price-title">Project</h3>
-          <p class="price-sub">3 videos &middot; 6 stories with CTA &middot; 100 lifestyle images</p>
-          <p class="price-total-lbl">Price</p>
-          <p class="price-orig" data-base="reg. 4 950 €" data-boost="reg. 6 950 €">reg. 4 950 €</p>
-          <p class="price-total" data-base="3500" data-boost="5500">3 500</p>
-          <span class="price-unit">EUR</span>
-          <div class="price-includes">
-            <p class="pi hi">3 videos published on Villa Sjövik&apos;s channels</p>
-            <p class="pi hi">6 stories on Villa Sjövik&apos;s channels &mdash; direct link and CTA</p>
-            <p class="pi hi">100 lifestyle images for your own channels and website</p>
-            <p class="pi">Full usage rights to all material</p>
-            <p class="pi">Styling, filming and editing included</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Starter (center, featured — upright + scaled-up hero) -->
-      <div class="pkg-col featured rv d2" data-pkg-col="starter">
+      <!-- Starter (left, featured — upright + scaled-up hero) -->
+      <div class="pkg-col featured rv d1" data-pkg-col="starter">
         <div class="pkg-boost" role="group" aria-pressed="false" data-pkg="starter">
           <button type="button" class="pkg-boost-head" aria-pressed="false" aria-controls="pkg-boost-body-starter" aria-label="Activate Meta reach for the Starter package">
             <span class="pkg-boost-switch" aria-hidden="true"></span>
@@ -1245,7 +1247,51 @@ position:relative;overflow:hidden;transition:color .35s}
         </div>
       </div>
 
-      <!-- Premium -->
+      <!-- Project (middle, tilts inward toward Starter) -->
+      <div class="pkg-col rv d2" data-pkg-col="project">
+        <div class="pkg-boost" role="group" aria-pressed="false" data-pkg="project">
+          <button type="button" class="pkg-boost-head" aria-pressed="false" aria-controls="pkg-boost-body-project" aria-label="Activate Meta reach for the Project package">
+            <span class="pkg-boost-switch" aria-hidden="true"></span>
+            <span class="pkg-boost-text">
+              <span class="pkg-boost-tag">Optional &middot; <em>Recommended</em></span>
+              <span class="pkg-boost-title">Activate Meta reach <span class="pkg-boost-price" data-bt-price="project">+2&nbsp;000 &euro;</span></span>
+            </span>
+          </button>
+          <div class="pkg-boost-body" id="pkg-boost-body-project" aria-hidden="true">
+            <div class="pkg-boost-body-inner">
+              <p class="pkg-boost-desc" data-pkg-desc="project">All three productions get retargeting. The videos are re-shown to those who already watched &mdash; over <strong class="pkg-boost-stat" data-bt-stat="project">300,000</strong> extra views! Meta retargeting re-shows each video with a clickable link ON the video itself, straight in Instagram and Facebook &mdash; for a seamless hand-off that drives the traffic directly home to your website.</p>
+              <p class="pkg-boost-desc-zero" data-pkg-desc-zero="project" hidden>Drag the slider to a budget below to see how many extra impressions the package delivers.</p>
+              <div class="pkg-slider">
+                <label class="pkg-slider-lbl" for="pk-range-project">Meta budget per production</label>
+                <input id="pk-range-project" class="pkg-range" type="range" min="0" max="3" step="1" value="2" data-pkg-slider="project" aria-label="Meta budget per production for the Project package"/>
+                <div class="pkg-ticks" aria-hidden="true">
+                  <span class="pkg-tick" data-pkg-tick="project" data-step="0">0 &euro;</span>
+                  <span class="pkg-tick" data-pkg-tick="project" data-step="1">500</span>
+                  <span class="pkg-tick is-active" data-pkg-tick="project" data-step="2">1 000</span>
+                  <span class="pkg-tick" data-pkg-tick="project" data-step="3">2 000</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="price-box rv" data-pkg-box="project">
+          <h3 class="price-title">Project</h3>
+          <p class="price-sub">3 videos &middot; 6 stories with CTA &middot; 100 lifestyle images</p>
+          <p class="price-total-lbl">Price</p>
+          <p class="price-orig" data-base="reg. 4 950 €" data-boost="reg. 6 950 €">reg. 4 950 €</p>
+          <p class="price-total" data-base="3500" data-boost="5500">3 500</p>
+          <span class="price-unit">EUR</span>
+          <div class="price-includes">
+            <p class="pi hi">3 videos published on Villa Sjövik&apos;s channels</p>
+            <p class="pi hi">6 stories on Villa Sjövik&apos;s channels &mdash; direct link and CTA</p>
+            <p class="pi hi">100 lifestyle images for your own channels and website</p>
+            <p class="pi">Full usage rights to all material</p>
+            <p class="pi">Styling, filming and editing included</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Premium (right, tilts inward toward Starter) -->
       <div class="pkg-col rv d3" data-pkg-col="premium">
         <div class="pkg-spacer" aria-hidden="true"></div>
         <div class="price-box rv" data-pkg-box="premium">
