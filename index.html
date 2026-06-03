@@ -403,7 +403,7 @@ background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:
 .pr-orb-1{width:500px;height:500px;background:radial-gradient(circle,rgba(212,168,75,.12),transparent);top:-150px;right:-100px;animation:orbf 26s ease-in-out infinite}
 @property --pb-float{syntax:'<length>';inherits:false;initial-value:0px}
 @property --pb-hover{syntax:'<length>';inherits:false;initial-value:0px}
-.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:52px;perspective:1800px;perspective-origin:50% 45%}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:108px;perspective:1800px;perspective-origin:50% 45%}
 
 /* === PKG-COL — wraps green handle (pkg-boost) + price-box as one tilted 3D stack ===
    Featured-center layout: left + right columns tilt inward, Starter (center, .featured)
@@ -424,8 +424,8 @@ background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:
    keeping the 3D "fan" aesthetic. */
 .price-grid>.pkg-col:nth-child(2){--pb-rot:-8deg;animation-delay:-1.5s}
 .price-grid>.pkg-col:last-child{--pb-rot:-13deg;animation-delay:0s}
-.price-grid>.pkg-col:not(.featured){--pb-scale:.9}
-.price-grid>.pkg-col.featured{--pb-rot:0deg;--pb-scale:1.12;z-index:2;animation-delay:-3s}
+.price-grid>.pkg-col:not(.featured){--pb-scale:.82}
+.price-grid>.pkg-col.featured{--pb-rot:0deg;--pb-scale:1.0;z-index:2;animation-delay:-3s}
 .pkg-col:hover{--pb-hover:-8px}
 
 .price-box{border:1px solid rgba(212,168,75,.2);border-top:2px solid rgba(212,168,75,.45);border-radius:22px;
