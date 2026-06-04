@@ -418,14 +418,14 @@ background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:
   transition:opacity .8s var(--ease),--pb-hover .55s var(--ease);
 }
 /* DOM order: Starter (featured, left) · Project (middle) · Premium (right).
-   Featured Starter is UPRIGHT (no rotateY) + scaled-up hero. The two non-featured
-   side cards both tilt INWARD toward Starter (toward the left/hero) via negative
-   rotateY — Project a gentle inward tilt, Premium a slightly stronger one —
-   keeping the 3D "fan" aesthetic. */
+   ALL cards fan INWARD toward the group (3D fan) — the featured Starter (leftmost)
+   tilts +rotateY (faces right/inward, mirroring the rightmost Premium's -13deg),
+   and the two non-featured side cards tilt -rotateY. The featured stays the scaled-up
+   gold hero — it tilts inward too, never upright. */
 .price-grid>.pkg-col:nth-child(2){--pb-rot:-8deg;animation-delay:-1.5s}
 .price-grid>.pkg-col:last-child{--pb-rot:-13deg;animation-delay:0s}
 .price-grid>.pkg-col:not(.featured){--pb-scale:.82}
-.price-grid>.pkg-col.featured{--pb-rot:0deg;--pb-scale:1.0;z-index:2;animation-delay:-3s}
+.price-grid>.pkg-col.featured{--pb-rot:13deg;--pb-scale:1.0;z-index:2;animation-delay:-3s}
 .pkg-col:hover{--pb-hover:-8px}
 
 .price-box{border:1px solid rgba(212,168,75,.2);border-top:2px solid rgba(212,168,75,.45);border-radius:22px;
